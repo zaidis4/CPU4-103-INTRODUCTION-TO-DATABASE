@@ -1,0 +1,184 @@
+
+USE crownfield_eye;
+START TRANSACTION;
+
+INSERT INTO specialty (specialty_id, specialty_name) VALUES
+  (1, 'Glaucoma'),
+  (2, 'Retina'),
+  (3, 'Cornea'),
+  (4, 'Cataract'),
+  (5, 'Paediatric Ophthalmology'),
+  (6, 'Oculoplastics'),
+  (7, 'Neuro-Ophthalmology'),
+  (8, 'Medical Retina'),
+  (9, 'Emergency Eye Care'),
+  (10, 'Low Vision');
+
+INSERT INTO clinic (clinic_id, clinic_name) VALUES
+  (1, 'City Road'),
+  (2, 'Bedford'),
+  (3, 'Croydon'),
+  (4, 'Stratford'),
+  (5, 'Greenwich'),
+  (6, 'Brixton'),
+  (7, 'Lewisham'),
+  (8, 'Camden'),
+  (9, 'Hackney'),
+  (10, 'Woolwich');
+
+INSERT INTO patient (patient_id, full_name, postcode) VALUES
+  ('OP001', 'Amina Yusuf', 'NE1 4AB'),
+  ('OP002', 'Daniel Reed', 'N16 7QP'),
+  ('OP003', 'Sofia Bennett', 'E8 2LD'),
+  ('OP004', 'Michael Okoro', 'SE6 3RT'),
+  ('OP005', 'Leila Khan', 'SW9 8PA'),
+  ('OP006', 'Owen Clarke', 'SE13 5LX'),
+  ('OP007', 'Priya Patel', 'CR0 2RF'),
+  ('OP008', 'Noah Evans', 'E15 2GD'),
+  ('OP009', 'Grace Turner', 'SE18 6AE'),
+  ('OP010', 'Isaac Morgan', 'NW1 8HG'),
+  ('OP011', 'Ella Brooks', 'SE10 9NF'),
+  ('OP012', 'Hassan Ali', 'SW2 3LN');
+
+INSERT INTO clinician (clinician_id, full_name, specialty_id) VALUES
+  (1, 'Dr Maya Shah', 1),
+  (2, 'Dr Leo Grant', 2),
+  (3, 'Dr Priya Nair', 3),
+  (4, 'Dr Helen Park', 4),
+  (5, 'Dr Amir Lewis', 5),
+  (6, 'Dr Emily Chen', 6),
+  (7, 'Dr Oliver King', 7),
+  (8, 'Dr Nadia Rahman', 8),
+  (9, 'Dr George Mills', 9),
+  (10, 'Dr Sara Ahmed', 10);
+
+INSERT INTO diagnosis (diagnosis_id, diagnosis_name) VALUES
+  (1, 'Ocular hypertension'),
+  (2, 'Diabetic macular oedema'),
+  (3, 'Glaucoma suspect'),
+  (4, 'Keratoconus'),
+  (5, 'Cataract'),
+  (6, 'Dry eye syndrome'),
+  (7, 'Retinal vein occlusion'),
+  (8, 'Conjunctivitis'),
+  (9, 'Age-related macular degeneration'),
+  (10, 'Blepharitis');
+
+INSERT INTO medicine (medicine_id, medicine_name) VALUES
+  (1, 'Latanoprost'),
+  (2, 'Timolol'),
+  (3, 'Aflibercept'),
+  (4, 'Sodium chloride drops'),
+  (5, 'Artificial tears'),
+  (6, 'Chloramphenicol drops'),
+  (7, 'Dorzolamide'),
+  (8, 'Brimonidine'),
+  (9, 'Olopatadine'),
+  (10, 'Lubricating eye ointment');
+
+INSERT INTO appointment (appointment_id, patient_id, clinician_id, clinic_id, appointment_date, appointment_time, notes) VALUES
+  (1, 'OP001', 1, 1, '2026-10-05', '09:00:00', 'Review IOP'),
+  (2, 'OP002', 2, 1, '2026-10-05', '09:30:00', 'OCT before review'),
+  (3, 'OP001', 1, 2, '2026-11-16', '10:15:00', 'Visual field test'),
+  (4, 'OP003', 1, 1, '2026-10-06', '11:00:00', 'Monitor'),
+  (5, 'OP004', 3, 3, '2026-10-07', '14:00:00', 'Corneal topography'),
+  (6, 'OP005', 4, 4, '2026-10-08', '10:00:00', 'Routine review'),
+  (7, 'OP006', 5, 5, '2026-10-09', '10:30:00', 'Vision assessment'),
+  (8, 'OP007', 6, 6, '2026-10-10', '09:15:00', 'Eyelid review'),
+  (9, 'OP008', 7, 7, '2026-10-11', '11:45:00', 'Visual symptoms'),
+  (10, 'OP009', 8, 8, '2026-10-12', '13:00:00', 'Retinal assessment'),
+  (11, 'OP010', 9, 9, '2026-10-13', '14:15:00', 'Acute irritation'),
+  (12, 'OP011', 10, 10, '2026-10-14', '15:00:00', 'Low vision advice'),
+  (13, 'OP012', 2, 1, '2026-10-15', '10:00:00', 'Retinal review'),
+  (14, 'OP001', 4, 1, '2026-11-14', '13:00:00', 'Follow-up review'),
+  (15, 'OP002', 2, 2, '2026-11-20', '09:45:00', 'Repeat imaging'),
+  (16, 'OP004', 3, 3, '2026-11-22', '11:00:00', 'Review cornea'),
+  (17, 'OP003', 1, 1, '2026-11-23', '11:15:00', 'Pressure check'),
+  (18, 'OP006', 5, 5, '2026-11-24', '12:00:00', 'Routine review'),
+  (19, 'OP007', 6, 6, '2026-11-25', '14:30:00', 'Follow-up assessment'),
+  (20, 'OP008', 7, 7, '2026-11-26', '15:30:00', 'Follow-up assessment');
+
+INSERT INTO appointment_diagnosis (appointment_id, diagnosis_id) VALUES
+  (1, 1),
+  (2, 2),
+  (3, 3),
+  (4, 4),
+  (5, 5),
+  (6, 6),
+  (7, 7),
+  (8, 8),
+  (9, 9),
+  (10, 10),
+  (11, 1),
+  (12, 2),
+  (13, 3),
+  (14, 4),
+  (15, 5),
+  (16, 6),
+  (17, 7),
+  (18, 8),
+  (19, 9),
+  (20, 10);
+
+INSERT INTO prescription (prescription_id, appointment_id) VALUES
+  (1, 1),
+  (2, 2),
+  (3, 3),
+  (4, 4),
+  (5, 5),
+  (6, 6),
+  (7, 7),
+  (8, 8),
+  (9, 9),
+  (10, 10),
+  (11, 11),
+  (12, 12);
+
+INSERT INTO prescription_item (prescription_item_id, prescription_id, medicine_id, dose, route, frequency, duration_days) VALUES
+  (1, 1, 1, '1 drop', 'Ophthalmic', 'As directed', 28),
+  (2, 2, 2, '1 drop', 'Ophthalmic', 'As directed', 28),
+  (3, 3, 3, '1 drop', 'Ophthalmic', 'As directed', 28),
+  (4, 4, 4, '1 drop', 'Ophthalmic', 'As directed', 28),
+  (5, 5, 5, '1 drop', 'Ophthalmic', 'As directed', 28),
+  (6, 6, 6, '1 drop', 'Ophthalmic', 'As directed', 28),
+  (7, 7, 7, '1 drop', 'Ophthalmic', 'As directed', 28),
+  (8, 8, 8, '1 drop', 'Ophthalmic', 'As directed', 28),
+  (9, 9, 9, '1 drop', 'Ophthalmic', 'As directed', 28),
+  (10, 10, 10, '1 drop', 'Ophthalmic', 'As directed', 28),
+  (11, 11, 1, '1 drop', 'Ophthalmic', 'As directed', 28),
+  (12, 12, 2, '1 drop', 'Ophthalmic', 'As directed', 28),
+  (13, 12, 3, '1 drop', 'Ophthalmic', 'As directed', 28),
+  (14, 12, 4, '1 drop', 'Ophthalmic', 'As directed', 28),
+  (15, 12, 5, '1 drop', 'Ophthalmic', 'As directed', 28);
+
+INSERT INTO follow_up (follow_up_id, appointment_id, due_date, priority, status, notes) VALUES
+  (1, 1, '2026-12-01', 'High', 'Pending', 'Fictional follow-up plan'),
+  (2, 2, '2026-12-02', 'Urgent', 'Pending', 'Fictional follow-up plan'),
+  (3, 3, '2026-12-03', 'Routine', 'Pending', 'Fictional follow-up plan'),
+  (4, 4, '2026-12-04', 'Routine', 'Pending', 'Fictional follow-up plan'),
+  (5, 5, '2026-12-05', 'Routine', 'Pending', 'Fictional follow-up plan'),
+  (6, 6, '2026-12-06', 'Routine', 'Pending', 'Fictional follow-up plan'),
+  (7, 7, '2026-12-07', 'Routine', 'Pending', 'Fictional follow-up plan'),
+  (8, 8, '2026-12-08', 'Routine', 'Pending', 'Fictional follow-up plan'),
+  (9, 9, '2026-12-09', 'Routine', 'Pending', 'Fictional follow-up plan'),
+  (10, 10, '2026-12-10', 'Routine', 'Pending', 'Fictional follow-up plan'),
+  (11, 11, '2026-12-11', 'Routine', 'Pending', 'Fictional follow-up plan'),
+  (12, 12, '2026-12-12', 'Routine', 'Pending', 'Fictional follow-up plan'),
+  (13, 13, '2026-12-13', 'Routine', 'Pending', 'Fictional follow-up plan'),
+  (14, 14, '2026-12-14', 'Routine', 'Pending', 'Fictional follow-up plan'),
+  (15, 15, '2026-12-15', 'Routine', 'Pending', 'Fictional follow-up plan');
+
+COMMIT;
+
+-- Verification queries (run after the inserts):
+SELECT 'patient' AS table_name, COUNT(*) AS rows_inserted FROM patient
+UNION ALL SELECT 'appointment', COUNT(*) FROM appointment
+UNION ALL SELECT 'clinician', COUNT(*) FROM clinician
+UNION ALL SELECT 'clinic', COUNT(*) FROM clinic
+UNION ALL SELECT 'specialty', COUNT(*) FROM specialty
+UNION ALL SELECT 'diagnosis', COUNT(*) FROM diagnosis
+UNION ALL SELECT 'medicine', COUNT(*) FROM medicine
+UNION ALL SELECT 'appointment_diagnosis', COUNT(*) FROM appointment_diagnosis
+UNION ALL SELECT 'prescription', COUNT(*) FROM prescription
+UNION ALL SELECT 'prescription_item', COUNT(*) FROM prescription_item
+UNION ALL SELECT 'follow_up', COUNT(*) FROM follow_up;
