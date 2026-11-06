@@ -1,0 +1,102 @@
+-- Crownfield Eye Hospital: reconstructed relational schema
+-- Based on the 11-table ERD and previously shared column definitions.
+
+
+CREATE DATABASE IF NOT EXISTS crownfield_eye;
+USE crownfield_eye;
+
+CREATE TABLE IF NOT EXISTS specialty (
+  specialty_id INT PRIMARY KEY,
+  specialty_name VARCHAR(80) NOT NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS clinic (
+  clinic_id INT PRIMARY KEY,
+  clinic_name VARCHAR(100) NOT NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS patient (
+  patient_id VARCHAR(10) PRIMARY KEY,
+  full_name VARCHAR(120) NOT NULL,
+  postcode VARCHAR(12) NOT NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS clinician (
+  clinician_id INT PRIMARY KEY,
+  full_name VARCHAR(120) NOT NULL,
+  specialty_id INT NOT NULL,
+  CONSTRAINT fk_clinician_specialty FOREIGN KEY (specialty_id)
+    REFERENCES specialty(specialty_id)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS diagnosis (
+  diagnosis_id INT PRIMARY KEY,
+  diagnosis_name VARCHAR(120) NOT NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS medicine (
+  medicine_id INT PRIMARY KEY,
+  medicine_name VARCHAR(120) NOT NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS appointment (
+  appointment_id INT PRIMARY KEY,
+  patient_id VARCHAR(10) NOT NULL,
+  clinician_id INT NOT NULL,
+  clinic_id INT NOT NULL,
+  appointment_date DATE NOT NULL,
+  appointment_time TIME NOT NULL,
+  notes VARCHAR(255),
+  CONSTRAINT fk_appointment_patient FOREIGN KEY (patient_id)
+    REFERENCES patient(patient_id),
+  CONSTRAINT fk_appointment_clinician FOREIGN KEY (clinician_id)
+    REFERENCES clinician(clinician_id),
+  CONSTRAINT fk_appointment_clinic FOREIGN KEY (clinic_id)
+    REFERENCES clinic(clinic_id)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS appointment_diagnosis (
+  appointment_id INT NOT NULL,
+  diagnosis_id INT NOT NULL,
+  PRIMARY KEY (appointment_id, diagnosis_id),
+  CONSTRAINT fk_appt_diagnosis_appointment FOREIGN KEY (appointment_id)
+    REFERENCES appointment(appointment_id),
+  CONSTRAINT fk_appt_diagnosis_diagnosis FOREIGN KEY (diagnosis_id)
+    REFERENCES diagnosis(diagnosis_id)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS prescription (
+  prescription_id INT PRIMARY KEY,
+  appointment_id INT NOT NULL,
+  CONSTRAINT fk_prescription_appointment FOREIGN KEY (appointment_id)
+    REFERENCES appointment(appointment_id)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS prescription_item (
+  prescription_item_id INT PRIMARY KEY,
+  prescription_id INT NOT NULL,
+  medicine_id INT NOT NULL,
+  dose VARCHAR(80),
+  route VARCHAR(40),
+  frequency VARCHAR(60),
+  duration_days INT,
+  CONSTRAINT chk_prescription_duration CHECK (duration_days IS NULL OR duration_days > 0),
+  CONSTRAINT fk_prescription_item_prescription FOREIGN KEY (prescription_id)
+    REFERENCES prescription(prescription_id),
+  CONSTRAINT fk_prescription_item_medicine FOREIGN KEY (medicine_id)
+    REFERENCES medicine(medicine_id)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS follow_up (
+  follow_up_id INT PRIMARY KEY,
+  appointment_id INT NOT NULL,
+  due_date DATE,
+  priority ENUM('Routine','High','Urgent'),
+  status ENUM('Pending','Scheduled','Completed','Cancelled'),
+  notes VARCHAR(255),
+  CONSTRAINT uq_follow_up_appointment UNIQUE (appointment_id),
+  CONSTRAINT fk_follow_up_appointment FOREIGN KEY (appointment_id)
+    REFERENCES appointment(appointment_id)
+) ENGINE=InnoDB;
+
+
