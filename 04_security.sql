@@ -9,7 +9,7 @@ CREATE ROLE IF NOT EXISTS 'hospital_doctor';
 CREATE ROLE IF NOT EXISTS 'hospital_receptionist';
 CREATE ROLE IF NOT EXISTS 'hospital_patient';
 
--- PART D2: Role-based access control (mirrors the original demonstration)
+-- PART D2: Role-based access control
 GRANT SELECT, INSERT, UPDATE, DELETE ON crownfield_eye.* TO 'hospital_admin';
 GRANT SELECT ON crownfield_eye.* TO 'hospital_doctor';
 GRANT INSERT, UPDATE ON crownfield_eye.appointment_diagnosis TO 'hospital_doctor';
@@ -39,8 +39,7 @@ SHOW GRANTS FOR 'hospital_patient';
 -- Do not use the root connection to test restricted access.
 
 -- PART D4: AES encryption applied to a STORED fictional sensitive field.
--- This demonstration table is separate from the 11 core ERD tables.
--- It is intended to strengthen the earlier expression-only AES demonstration.
+
 CREATE TABLE IF NOT EXISTS encrypted_note_demo (
     demo_note_id INT PRIMARY KEY,
     encrypted_note VARBINARY(1024) NOT NULL,
