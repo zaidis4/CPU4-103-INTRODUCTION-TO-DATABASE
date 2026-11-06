@@ -1,0 +1,102 @@
+-- Crownfield Eye Hospital | CPU4:103 | Individual SQL features
+
+
+USE crownfield_eye;
+
+-- FEATURE 1: GROUP BY and HAVING
+-- Question: Which patients have more than one appointment?
+SELECT p.patient_id, p.full_name AS Patient,
+       COUNT(a.appointment_id) AS Total_Appointments
+FROM patient AS p
+JOIN appointment AS a ON a.patient_id = p.patient_id
+GROUP BY p.patient_id, p.full_name
+HAVING COUNT(a.appointment_id) > 1
+ORDER BY Total_Appointments DESC, Patient;
+
+-- FEATURE 2: INNER JOIN across appointment, patient and clinician
+-- Question: Who is attending, with which clinician, and when?
+SELECT p.full_name AS Patient, c.full_name AS Clinician,
+       a.appointment_date AS Appointment_Date,
+       a.appointment_time AS Appointment_Time
+FROM appointment AS a
+INNER JOIN patient AS p ON a.patient_id = p.patient_id
+INNER JOIN clinician AS c ON a.clinician_id = c.clinician_id
+ORDER BY a.appointment_date, a.appointment_time;
+
+-- FEATURE 3: LEFT JOIN showing missing follow-ups
+-- Question: Which appointments have no follow-up record?
+SELECT a.appointment_id, p.full_name AS Patient,
+       a.appointment_date, f.due_date, f.priority
+FROM appointment AS a
+INNER JOIN patient AS p ON a.patient_id = p.patient_id
+LEFT JOIN follow_up AS f ON a.appointment_id = f.appointment_id
+WHERE f.follow_up_id IS NULL
+ORDER BY a.appointment_id;
+
+-- FEATURE 4: Nested subquery
+-- Question: Which patients have more appointments than the average among
+-- patients who have at least one appointment?
+SELECT p.patient_id, p.full_name AS Patient,
+       COUNT(a.appointment_id) AS Total_Appointments
+FROM patient AS p
+JOIN appointment AS a ON p.patient_id = a.patient_id
+GROUP BY p.patient_id, p.full_name
+HAVING COUNT(a.appointment_id) > (
+    SELECT AVG(appointment_count)
+    FROM (
+        SELECT COUNT(*) AS appointment_count
+        FROM appointment
+        GROUP BY patient_id
+    ) AS patient_totals
+)
+ORDER BY Total_Appointments DESC, Patient;
+
+-- FEATURE 5: Stored procedure with input parameter
+-- Question: Which appointments belong to a selected patient?
+-- DROP allows this script to be rerun on a disposable test database.
+DROP PROCEDURE IF EXISTS GetPatientAppointments;
+DELIMITER //
+CREATE PROCEDURE GetPatientAppointments(IN p_patient_id VARCHAR(10))
+BEGIN
+    SELECT p.full_name AS Patient, a.appointment_date,
+           a.appointment_time, c.full_name AS Clinician
+    FROM appointment AS a
+    JOIN patient AS p ON a.patient_id = p.patient_id
+    JOIN clinician AS c ON a.clinician_id = c.clinician_id
+    WHERE a.patient_id = p_patient_id
+    ORDER BY a.appointment_date, a.appointment_time;
+END //
+DELIMITER ;
+
+CALL GetPatientAppointments('OP001');
+
+-- FEATURE 6: Trigger that audits changes to appointment dates
+-- Question: Can the database automatically record a date change?
+CREATE TABLE IF NOT EXISTS appointment_audit (
+    audit_id INT AUTO_INCREMENT PRIMARY KEY,
+    appointment_id INT NOT NULL,
+    old_date DATE NOT NULL,
+    new_date DATE NOT NULL,
+    changed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+DROP TRIGGER IF EXISTS trg_appointment_date_audit;
+DELIMITER //
+CREATE TRIGGER trg_appointment_date_audit
+AFTER UPDATE ON appointment
+FOR EACH ROW
+BEGIN
+    IF NOT (OLD.appointment_date <=> NEW.appointment_date) THEN
+        INSERT INTO appointment_audit
+            (appointment_id, old_date, new_date)
+        VALUES
+            (NEW.appointment_id, OLD.appointment_date, NEW.appointment_date);
+    END IF;
+END //
+DELIMITER ;
+
+-- Confirm trigger exists and view audit records (may initially be empty).
+SHOW TRIGGERS LIKE 'appointment';
+SELECT * FROM appointment_audit ORDER BY audit_id DESC;
+
+
